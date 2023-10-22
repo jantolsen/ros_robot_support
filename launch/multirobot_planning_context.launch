@@ -1,0 +1,78 @@
+<launch>
+    <!-- General Parameter(s) -->
+    <arg name="dollar" default="$"/>
+
+    <!-- Robot #1 Settings -->
+    <arg name="robot1_prefix"       default="robot1"/>
+    <arg name="robot1_type"         default="gp400"/>
+    <arg name="robot1_eoat"         default="false"/>
+    <arg name="robot1_support_path" default="~"/>
+
+    <!-- Robot #2 Settings -->
+    <arg name="robot2_prefix"       default="robot2"/>
+    <arg name="robot2_type"         default="irb6660"/>
+    <arg name="robot2_eoat"         default="false"/>
+    <arg name="robot2_support_path" default="~"/>
+
+    <!-- Check for empty robot-namespace. If not add an "_" to the robot-prefix -->
+    <arg if="$(eval robot1_prefix != '')" name="robot1_scene_prefix" value="$(arg robot1_prefix)_" />
+    <arg if="$(eval robot1_prefix == '')" name="robot1_scene_prefix" value="$(arg robot1_prefix)" />
+
+    <arg if="$(eval robot2_prefix != '')" name="robot2_scene_prefix" value="$(arg robot2_prefix)_" />
+    <arg if="$(eval robot2_prefix == '')" name="robot2_scene_prefix" value="$(arg robot2_prefix)" />
+
+    <!-- The name of the parameter under which the URDF is loaded -->
+    <arg name="robot_description" default="robot_description"/>
+
+    <!-- Load universal robot description format (URDF) -->
+    <param name="$(arg robot_description)" 
+                command="xacro --inorder '$(find robot_support)/urdf/multi_robot_scene_urdf.xacro' 
+                    robot1_prefix:=$(arg robot1_scene_prefix)
+                    robot1_type:=$(arg robot1_type)
+                    robot1_eoat:=$(arg robot1_eoat)
+                    robot2_prefix:=$(arg robot2_scene_prefix)
+                    robot2_type:=$(arg robot2_type)
+                    robot2_eoat:=$(arg robot2_eoat)"/>
+
+    <!-- The semantic description that corresponds to the URDF -->
+    <param name="$(arg robot_description)_semantic" 
+                command="xacro --inorder '$(find robot_support)/urdf/multi_robot_scene_srdf.xacro' 
+                    robot1_prefix:=$(arg robot1_scene_prefix)
+                    robot1_type:=$(arg robot1_type)
+                    robot2_prefix:=$(arg robot2_scene_prefix)
+                    robot2_type:=$(arg robot2_type)"/>
+
+    <!-- Robot #1 - Prefix Parameter Node -->
+    <node name="$(anon robot1_prefix_param_node)" pkg="robot_support" type="prefix_param_node" output="screen" > 
+        <param name="robot_prefix"      type="str" value="$(arg robot1_prefix)"/>
+        <param name="robot_type"        type="str" value="$(arg robot1_type)"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot1_support_path))/config/joint_names.yaml"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot1_support_path))/config/joint_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/cartesian_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_opw.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_lma.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/opw_parameters_$(arg robot1_type).yaml"/>
+        <!-- <rosparam command="load" file="$(arg dollar)(find $(arg robot1_support_path))/config/opw_parameters_$(arg robot1_type).yaml"/> -->
+    </node>
+
+    <!-- Robot #2 - Prefix Parameter Node -->
+    <node name="$(anon robot2_prefix_param_node)" pkg="robot_support" type="prefix_param_node" output="screen" > 
+        <param name="robot_prefix"      type="str" value="$(arg robot2_prefix)"/>
+        <param name="robot_type"        type="str" value="$(arg robot2_type)"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot2_support_path))/config/joint_names.yaml"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot2_support_path))/config/joint_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/cartesian_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_opw.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_lma.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/opw_parameters_$(arg robot2_type).yaml"/>
+        <!-- <rosparam command="load" file="$(arg dollar)(find $(arg robot2_support_path))/config/opw_parameters_$(arg robot2_type).yaml"/> -->
+    </node>
+</launch>

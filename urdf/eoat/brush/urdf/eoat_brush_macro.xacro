@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="eoat_brush" params="prefix ref_link ref_xyz ref_rpy">
+
+        <!-- Material -->
+        <material name="${prefix}dark_grey">
+            <color rgba="0.2 0.2 0.2 1" />
+        </material>
+
+        <material name="${prefix}silver">
+            <color rgba="0.8 0.8 0.8 1" />
+        </material>
+
+        <!-- Coordinate System joint -->
+        <joint name="${prefix}csys_joint" type="fixed">
+            <parent link="${ref_link}"/>
+            <child link="${prefix}_link"/>
+            <origin xyz="${ref_xyz}" rpy="${ref_rpy}"/>
+        </joint>
+
+        <!-- The imported model -->
+        <link name="${prefix}_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0005" rpy="${radians(90)} 0 0"/>
+                <geometry>
+                    <mesh filename="package://robot_support/urdf/eoat/brush/meshes/irb6660_endeffector.stl"/>
+                </geometry>
+                <material name="${prefix}silver"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0005" rpy="${radians(90)} 0 0"/>
+                <geometry>
+                    <!-- using "visual" as collision mesh, to allow robot interaction -->
+                    <mesh filename="package://robot_support/urdf/eoat/brush/meshes/irb6660_endeffector.stl"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- Tool-Center-Point of End-Effector -->
+        <link name="${prefix}_tcp"/>
+        <joint name="${prefix}_tcp_joint" type="fixed">
+            <parent link="${prefix}_link"/>
+            <child link="${prefix}_tcp"/>
+            <origin xyz="0.000 0.000 0.260" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+    </xacro:macro>
+</robot>

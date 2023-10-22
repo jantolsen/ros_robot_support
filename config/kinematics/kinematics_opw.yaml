@@ -1,0 +1,5 @@
+opw_kinematics:
+  kinematics_solver: moveit_opw_kinematics_plugin/MoveItOPWKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.005
+  kinematics_solver_attempts: 10

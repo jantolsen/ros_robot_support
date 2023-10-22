@@ -1,0 +1,47 @@
+<launch>
+    <!-- General Parameter(s) -->
+    <arg name="dollar" default="$"/>
+
+    <!-- Robot Settings -->
+    <arg name="robot_prefix"        default=""/>
+    <arg name="robot_type"          default="gp400" />
+    <arg name="robot_eoat"          default="false" />
+    <arg name="robot_support_path"  default="~"/>
+
+    <!-- Check for empty robot-namespace. If not add an "_" to the robot-prefix -->
+    <arg if="$(eval robot_prefix != '')" name="robot_scene_prefix" value="$(arg robot_prefix)_" />
+    <arg if="$(eval robot_prefix == '')" name="robot_scene_prefix" value="$(arg robot_prefix)" />
+
+    <!-- The name of the parameter under which the URDF is loaded -->
+    <arg name="robot_description" default="robot_description"/>
+
+    <!-- Load universal robot description format (URDF) -->
+    <param name="$(arg robot_description)" 
+                command="xacro --inorder '$(find robot_support)/urdf/robot_scene_urdf.xacro' 
+                    robot_prefix:=$(arg robot_scene_prefix)
+                    robot_type:=$(arg robot_type)
+                    robot_eoat:=$(arg robot_eoat)"/>
+
+    <!-- The semantic description that corresponds to the URDF -->
+    <param name="$(arg robot_description)_semantic" 
+                command="xacro --inorder '$(find robot_support)/urdf/robot_scene_srdf.xacro' 
+                    robot_prefix:=$(arg robot_scene_prefix)
+                    robot_type:=$(arg robot_type)"/>
+
+    <!-- Robot Prefix Parameter Node -->
+    <node name="$(anon prefix_param_node)" pkg="robot_support" type="prefix_param_node" output="screen" > 
+        <param name="robot_prefix"      type="str" value="$(arg robot_prefix)"/>
+        <param name="robot_type"        type="str" value="$(arg robot_type)"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot_support_path))/config/joint_names.yaml"/>
+        <rosparam command="load" file="$(arg dollar)(find $(arg robot_support_path))/config/joint_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/cartesian_limits.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_opw.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_lma.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_kdl.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/kinematics_cached_tracik.yaml"/>
+        <rosparam command="load" file="$(find robot_support)/config/kinematics/opw_parameters_$(arg robot_type).yaml"/>
+        <!-- <rosparam command="load" file="$(arg dollar)(find $(arg robot_support_path))/config/opw_parameters_$(arg robot_type).yaml"/> -->
+    </node>
+</launch>

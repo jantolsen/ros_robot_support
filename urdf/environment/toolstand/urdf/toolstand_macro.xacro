@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="toolstand" params="prefix connected_to xyz rpy">
+
+        <!-- Material -->
+        <material name="${prefix}_dark_grey">
+            <color rgba="0.2 0.2 0.2 1" />
+        </material>
+
+        <!-- Coordinate System joint -->
+        <joint name="${prefix}_csys_joint" type="fixed">
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_csys"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+        </joint>
+
+        <!-- The imported model -->
+        <link name="${prefix}_csys">
+            <visual>
+                <origin xyz="0.0 0.0 1.17" rpy="${radians(-90)} 0 0"/>
+                <geometry>
+                    <mesh filename="package://robotics_support/environment/toolstand/meshes/visual/toolstand.stl"/>
+                </geometry>
+                <material name="${prefix}_dark_grey"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 1.17" rpy="${radians(-90)} 0 0"/>
+                <geometry>
+                    <!-- using "visual" as collision mesh, to allow robot interaction -->
+                    <mesh filename="package://robotics_support/environment/toolstand/meshes/visual/toolstand.stl"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- Helper Link/Joints to create CSYS -->
+
+        <!-- Slot 1 (far left)-->
+        <joint name="${prefix}_slot1" type="fixed">
+            <origin xyz="0.0 0.0 1.300" rpy="0 0 0"/>
+            <parent link="${prefix}_csys"/>
+            <child link="${prefix}_slot1"/>
+        </joint>
+        <link name="${prefix}_slot1"/>
+
+        <!-- Slot 2 frame -->
+        <joint name="${prefix}_slot2" type="fixed">
+            <origin xyz="0.765 0.0 1.300" rpy="0 0 0"/>
+            <parent link="${prefix}_csys"/>
+            <child link="${prefix}_slot2"/>
+        </joint>
+        <link name="${prefix}_slot2"/>
+
+    </xacro:macro>
+</robot>

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="handtruck_pallet" params="prefix connected_to xyz rpy mesh_scale">
+
+        <!-- Material -->
+        <material name="${prefix}_dark_grey">
+            <color rgba="0.2 0.2 0.2 1" />
+        </material>
+
+        <!-- Coordinate System joint -->
+        <joint name="${prefix}_csys_joint" type="fixed">
+            <parent link="${connected_to}"/>
+            <child link="${prefix}_csys"/>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+        </joint>
+
+        <!-- The imported model -->
+        <link name="${prefix}_csys">
+            <visual>
+                <origin xyz="0.0 0.0 0.270" rpy="${radians(90)} 0 ${radians(90)}"/>
+                <geometry>
+                    <mesh filename="package://robot_support/urdf/environment/auxilirary/meshes/visual/handtruck_pallet.stl" 
+                          scale="${mesh_scale} ${mesh_scale} ${mesh_scale}"/>
+                </geometry>
+                <material name="${prefix}_dark_grey"/>
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.270" rpy="${radians(90)} 0 ${radians(90)}"/>
+                <geometry>
+                    <mesh filename="package://robot_support/urdf/environment/auxilirary/meshes/visual/handtruck_pallet.stl"
+                          scale="${mesh_scale} ${mesh_scale} ${mesh_scale}"/>
+                </geometry>
+            </collision>
+        </link>
+
+    </xacro:macro>
+</robot>

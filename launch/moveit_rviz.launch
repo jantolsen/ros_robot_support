@@ -1,0 +1,14 @@
+<launch>
+
+    <!-- Configuration -->
+    <arg name="launch_prefix" default="" />
+    <arg name="rviz_config" default="" />
+
+    <!-- RVIZ Node -->
+    <node name="$(anon rviz)" pkg="rviz" type="rviz" 
+        args="$(arg rviz_config)"
+        launch-prefix="$(arg launch_prefix)" 
+        respawn="false"
+        output="screen"/>
+
+</launch>

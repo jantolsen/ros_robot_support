@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<robot name="multi_robot_scene" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ############################## -->
+  <!--           Robot #1             -->
+  <!-- ############################## -->
+
+    <!-- Xacro Parameters -->
+    <xacro:arg name="robot1_prefix"  default="robot1"/>
+    <xacro:arg name="robot1_type"    default="gp400"/>
+
+    <!-- Robot Properties -->
+    <xacro:property name="robot1_type" value="$(arg robot1_type)"/>
+
+    <!-- Yaskawa GP400 Robot -->
+    <xacro:if value="${robot1_type == 'gp400'}">
+      <!-- The Yaskawa-Robot-SRDF xacro must be included with passing parameters -->
+      <xacro:include filename="$(find robot_support)/urdf/robots/gp400/gp400_srdf.xacro"/>
+      <!-- "robot_prefix" describes the naming of the robot -->
+      <xacro:robot_gp400 robot_prefix = "$(arg robot1_prefix)"/>
+    </xacro:if>
+
+    <!-- ABB IRB6660 Robot -->
+    <xacro:if value="${robot1_type == 'irb6660'}">
+      <!-- The ABB-Robot-URDF xacro must be included with passing parameters -->
+      <xacro:include filename="$(find robot_support)/urdf/robots/irb6660/irb6660_srdf.xacro"/>
+      <!-- "prefix" describes the naming of the robot -->
+      <xacro:robot_irb6660 robot_prefix = "$(arg robot1_prefix)"/>
+    </xacro:if>
+
+  <!-- ############################## -->
+  <!--           Robot #2             -->
+  <!-- ############################## -->
+
+    <!-- Xacro Parameters -->
+    <xacro:arg name="robot2_prefix"  default="robot2"/>
+    <xacro:arg name="robot2_type"    default="irb6660"/>
+
+    <!-- Robot Properties -->
+    <xacro:property name="robot2_type" value="$(arg robot2_type)"/>
+
+    <!-- Yaskawa GP400 Robot -->
+    <xacro:if value="${robot2_type == 'gp400'}">
+      <!-- The Yaskawa-Robot-SRDF xacro must be included with passing parameters -->
+      <xacro:include filename="$(find robot_support)/urdf/robots/gp400/gp400_srdf.xacro"/>
+      <!-- "robot_prefix" describes the naming of the robot -->
+      <xacro:robot_gp400 robot_prefix = "$(arg robot2_prefix)"/>
+    </xacro:if>
+
+    <!-- ABB IRB6660 Robot -->
+    <xacro:if value="${robot2_type == 'irb6660'}">
+      <!-- The ABB-Robot-URDF xacro must be included with passing parameters -->
+      <xacro:include filename="$(find robot_support)/urdf/robots/irb6660/irb6660_srdf.xacro"/>
+      <!-- "prefix" describes the naming of the robot -->
+      <xacro:robot_irb6660 robot_prefix = "$(arg robot2_prefix)"/>
+    </xacro:if>
+
+</robot>

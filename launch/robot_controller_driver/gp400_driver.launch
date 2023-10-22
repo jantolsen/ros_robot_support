@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Settings -->
+    <arg name="robot_ip" default="false" />
+    <arg name="parallel_linkage" default="true" doc="If true, compensate for J2-J3 parallel linkage" />
+
+    <!-- Motoman Driver -->
+    <include file="$(find motoman_driver)/launch/robot_multigroup_interface_streaming_yrc1000.launch">
+        <arg name="robot_ip"    value="$(arg robot_ip)" />
+        <arg name="J23_coupled" value="$(arg parallel_linkage)" />
+    </include>
+
+</launch>

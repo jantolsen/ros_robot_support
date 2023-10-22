@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<robot name="robot_gp400" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="robot_gp400" params="robot_prefix ref_link ref_xyz ref_rpy">
+
+        <!-- Xacro Agruments and Default Values -->
+        <xacro:arg name="robot_prefix"    default=""/>
+        <xacro:arg name="ref_link"        default="world"/>
+        <xacro:arg name="ref_xyz"         default="0.000 0.000 0.000"/>
+        <xacro:arg name="ref_rpy"         default="${radians(0.00)} ${radians(0.00)} ${radians(0.00)}"/>
+
+        <!-- YASKAWA GP400 Robot -->
+        <xacro:include filename="$(find motoman_gp400_support)/urdf/gp400_macro.xacro"/>
+        <xacro:motoman_gp400 prefix="${robot_prefix}"/>
+
+        <!-- Reference Link to Robot Base Link -->
+        <joint name="${robot_prefix}ref_to_base_link" type="fixed">
+            <origin xyz="${ref_xyz}" rpy="${ref_rpy}"/>
+            <parent link="${ref_link}"/>
+            <child link="${robot_prefix}base_link"/>
+        </joint>
+        
+        <!-- End Effector -->
+        <link name="${robot_prefix}eoat_mount"/>
+
+        <!-- Robot Tool0 to EOAT Mount -->
+        <joint name="${robot_prefix}tool0_eoat_mount_joint" type="fixed">
+            <origin xyz="0.000 0.000 0.000" rpy="${radians(0.00)} ${radians(0.00)} ${radians(0.00)}"/>
+            <parent link="${robot_prefix}tool0"/>
+            <child link="${robot_prefix}eoat_mount"/>
+        </joint>
+        
+    </xacro:macro>
+</robot>

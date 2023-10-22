@@ -1,0 +1,60 @@
+<launch>
+
+    <!-- Planning Context Settings -->
+    <arg name="multi_robot" default="false"/>
+
+    <!-- Single Robot Settings -->
+        <arg name="robot_prefix"        default=""/>
+        <arg name="robot_type"          default="gp400"/>
+        <arg name="robot_eoat"          default="false"/>
+        <arg name="robot_support_path"  default="motoman_gp400_support"/>
+    
+    <!-- Multi Robot Settings -->
+        <!-- Robot 1 -->
+        <arg name="robot1_prefix"        default="robot1"/>
+        <arg name="robot1_type"          default="gp400"/>
+        <arg name="robot1_eoat"          default="false"/>
+        <arg name="robot1_support_path"  default="motoman_gp400_support"/>
+
+        <!-- Robot 2 -->
+        <arg name="robot2_prefix"        default="robot2"/>
+        <arg name="robot2_type"          default="irb6660"/>
+        <arg name="robot2_eoat"          default="false"/>
+        <arg name="robot2_support_path"  default="abb_irb6660_support"/>
+
+    <!-- The name of the parameter under which the URDF is loaded -->
+    <arg name="robot_description" default="robot_description"/>
+
+    <!-- ############################## -->
+    <!--    Parameter Loading Section   -->
+    <!-- ############################## -->
+
+        <!--   Single Robot Configuration   -->
+        <group unless="$(arg multi_robot)">
+            <!-- Robot Planning Context -->
+            <include file="$(find robot_support)/launch/robot_planning_context.launch" >
+                <arg name="robot_prefix"        value="$(arg robot_prefix)" />
+                <arg name="robot_type"          value="$(arg robot_type)" />
+                <arg name="robot_eoat"          value="$(arg robot_eoat)" />
+                <arg name="robot_support_path"  value="$(arg robot_support_path)" />
+                <arg name="robot_description"   value="$(arg robot_description)" />
+            </include>
+        </group>
+
+        <!-- Multi Robot Configuration -->
+        <group if="$(arg multi_robot)">
+            <!-- Multi Robot Planning Context -->
+            <include file="$(find robot_support)/launch/multirobot_planning_context.launch" >
+                <arg name="robot1_prefix"        value="$(arg robot1_prefix)" />
+                <arg name="robot1_type"          value="$(arg robot1_type)" />
+                <arg name="robot1_eoat"          value="$(arg robot1_eoat)" />
+                <arg name="robot1_support_path"  value="$(arg robot1_support_path)" />
+                <arg name="robot2_prefix"        value="$(arg robot2_prefix)" />
+                <arg name="robot2_type"          value="$(arg robot2_type)" />
+                <arg name="robot2_eoat"          value="$(arg robot2_eoat)" />
+                <arg name="robot2_support_path"  value="$(arg robot2_support_path)" />
+                <arg name="robot_description"   value="$(arg robot_description)" />
+            </include>
+        </group>
+
+</launch>
