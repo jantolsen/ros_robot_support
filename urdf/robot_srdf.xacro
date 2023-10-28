@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
-<robot name="robot_scene" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="robot" params="robot_prefix robot_type">
 
   <!-- Xacro Parameters -->
   <xacro:arg name="robot_prefix"  default=""/>
@@ -12,6 +13,7 @@
   <xacro:if value="${robot_type == 'gp400'}">
     <!-- The Yaskawa-Robot-SRDF xacro must be included with passing parameters -->
     <xacro:include filename="$(find robot_support)/urdf/robots/gp400/gp400_srdf.xacro"/>
+    <!-- The xacro must be included with passing parameters -->
     <!-- "robot_prefix" describes the naming of the robot -->
     <xacro:robot_gp400 robot_prefix = "$(arg robot_prefix)"/>
   </xacro:if>
@@ -20,8 +22,10 @@
   <xacro:if value="${robot_type == 'irb6660'}">
     <!-- The ABB-Robot-URDF xacro must be included with passing parameters -->
     <xacro:include filename="$(find robot_support)/urdf/robots/irb6660/irb6660_srdf.xacro"/>
+    <!-- The xacro must be included with passing parameters -->
     <!-- "prefix" describes the naming of the robot -->
     <xacro:robot_irb6660 robot_prefix = "$(arg robot_prefix)"/>
   </xacro:if>
-
+  
+  </xacro:macro>
 </robot>

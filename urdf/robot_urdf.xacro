@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<robot name="robot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="robot" params="robot_prefix robot_type ref_link ref_xyz ref_rpy">
+    
+    <!-- Xacro Parameters -->
+    <!-- <xacro:arg name="global_ref_frame"  default="world"/> -->
+    <xacro:arg name="robot_prefix"      default=""/>
+    <xacro:arg name="robot_type"        default="gp400"/>
+
+    <xacro:arg name="ref_link"          default="world" />
+    <xacro:arg name="ref_xyz"           default="0.000 0.000 0.000"/>
+    <xacro:arg name="ref_rpy"           default="${radians(0.00)} ${radians(0.00)} ${radians(0.00)}"/>
+
+    <!-- Robot Properties -->
+    <xacro:property name="robot_type" value="$(arg robot_type)"/>
+    
+    <!-- Yaskawa GP400 Robot -->
+    <xacro:if value="${robot_type == 'gp400'}">
+        <!-- YASKAWA GP400 Robot URDF -->
+        <xacro:include filename="$(find robot_support)/urdf/robots/gp400/gp400_urdf.xacro"/>
+        <!-- The xacro must be included with passing parameters -->
+        <!-- "robot_prefix" describes the naming of the robot -->
+        <!-- "ref_link"     describes the reference-link of which the object (robot-base) is connected to -->
+        <!-- "ref_xyz"      position [m] of the object (robot-base) relative to the reference-link -->
+        <!-- "ref_rpy"      orientation [rad] of the object (robot-base) relative to the reference-link -->
+        <xacro:robot_gp400 robot_prefix = "$(arg robot_prefix)" 
+                           ref_link     = "$(arg ref_link)"  
+                           ref_xyz      = "$(arg ref_xyz)"  
+                           ref_rpy      = "$(arg ref_rpy)" />
+    </xacro:if>
+
+    <!-- ABB IRB6660 Robot -->
+    <xacro:if value="${robot_type == 'irb6660'}">
+        <!-- ABB IRB6660 Robot URDF -->
+        <xacro:include filename="$(find robot_support)/urdf/robots/irb6660/irb6660_urdf.xacro"/>
+        <!-- The xacro must be included with passing parameters -->
+        <!-- "robot_prefix" describes the naming of the robot -->
+        <!-- "ref_link"     describes the reference-link of which the object (robot-base) is connected to -->
+        <!-- "ref_xyz"      position [m] of the object (robot-base) relative to the reference-link -->
+        <!-- "ref_rpy"      orientation [rad] of the object (robot-base) relative to the reference-link -->
+        <xacro:robot_irb6660 robot_prefix = "$(arg robot_prefix)" 
+                             ref_link     = "$(arg ref_link)"  
+                             ref_xyz      = "$(arg ref_xyz)"  
+                             ref_rpy      = "$(arg ref_rpy)" />
+    </xacro:if>
+
+    </xacro:macro>
+</robot>
