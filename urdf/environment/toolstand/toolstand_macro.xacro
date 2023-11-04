@@ -19,7 +19,7 @@
             <visual>
                 <origin xyz="0.0 0.0 1.17" rpy="${radians(-90)} 0 0"/>
                 <geometry>
-                    <mesh filename="package://robotics_support/environment/toolstand/meshes/visual/toolstand.stl"/>
+                    <mesh filename="package://robot_support/environment/toolstand/meshes/visual/toolstand.stl"/>
                 </geometry>
                 <material name="${prefix}_dark_grey"/>
             </visual>
@@ -27,7 +27,7 @@
                 <origin xyz="0.0 0.0 1.17" rpy="${radians(-90)} 0 0"/>
                 <geometry>
                     <!-- using "visual" as collision mesh, to allow robot interaction -->
-                    <mesh filename="package://robotics_support/environment/toolstand/meshes/visual/toolstand.stl"/>
+                    <mesh filename="package://robot_support/environment/toolstand/meshes/visual/toolstand.stl"/>
                 </geometry>
             </collision>
         </link>
