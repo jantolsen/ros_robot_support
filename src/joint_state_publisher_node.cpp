@@ -92,12 +92,9 @@ class RobotJointState
             ros::NodeHandle nh,
             const std::string& robot_prefix)
         {
-            // Mapping Class input(s) to class member(s)
-            robot_prefix_=  robot_prefix;
-
             // Temporary variables of subscriber and publisher names
-            std::string sub_name = "/" + robot_prefix_ + "/controller_joint_states";
-            std::string pub_name = "/" + robot_prefix_ + "/joint_states";
+            std::string sub_name = "/" + robot_prefix + "/controller_joint_states";
+            std::string pub_name = "/" + robot_prefix + "/joint_states";
 
             // Define Controller-Joint-State Subscriber
             controller_joint_state_sub_ = nh.subscribe<sensor_msgs::JointState>(sub_name, 1e3, &RobotJointState::jointStateCallback, this);
@@ -252,11 +249,24 @@ int main(int argc, char** argv)
     // Single-Robot System
     else
     {
-        // Declare an instance of Robot-Joint-State class
-        auto robot = std::make_shared<RobotJointState>(nh, robot_prefixes[0]);
+        // Empty robot-prefix
+        if(robot_prefixes[0].empty())
+        {
+            // Declare an instance of Robot-Joint-State class
+            auto robot = std::make_shared<RobotJointState>(nh);
 
-        // Add the Robot-Class Object to the Robot-Class vector
-        robots.push_back(robot);
+            // Add the Robot-Class Object to the Robot-Class vector
+            robots.push_back(robot);
+        }
+        // Non-Empty robot-prefix
+        else
+        {
+            // Declare an instance of Robot-Joint-State class
+            auto robot = std::make_shared<RobotJointState>(nh, robot_prefixes[0]);
+
+            // Add the Robot-Class Object to the Robot-Class vector
+            robots.push_back(robot);
+        }
     }
 
     // ROS-Node Loop
@@ -272,10 +282,14 @@ int main(int argc, char** argv)
 
         // Iterate over each Robot(s) in the system
         for(size_t i = 0; i < robots.size(); i++)
-        {
-            // Publish Joint-State for indexed robot
-            // (with Robot-prefix)
-            robots[i]->publishJointState();
+        {   
+            // Non-Empty robot prefix
+            if(!robot_prefixes[0].empty())
+            {   
+                // Publish Joint-State for indexed robot
+                // (with Robot-prefix)
+                robots[i]->publishJointState();
+            }
 
             // Get Joint-State for indexed robot
             sensor_msgs::JointState robot_joint_state = robots[i]->getRobotJointState();
@@ -284,6 +298,7 @@ int main(int argc, char** argv)
             joint_states.push_back(robot_joint_state);
         }
 
+        
         // Iterate over each Joint-State in Joint-State vector
         for(int j = 0; j < joint_states.size(); j++)
         {
