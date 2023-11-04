@@ -5,15 +5,15 @@
     <xacro:arg name="global_ref_frame" default="world"/>
 
     <!-- Euro Pallet -->
-    <xacro:include filename="$(find robot_support)/urdf/environment/auxilirary/urdf/europallet_macro.xacro"/>
+    <xacro:include filename="$(find robot_support)/urdf/environment/extra/europallet_macro.xacro"/>
     <!-- The xacro must be included with passing parameters -->
     <!-- "connected_to" describes the link of which the object is connected to -->
     <xacro:europallet prefix="Europallet" connected_to="$(arg global_ref_frame)" xyz="1.500 0.000 0.000" rpy="0 ${radians(90)} ${radians(0)}" mesh_scale="0.01"/>
     
     <!-- Handtruck Pallet -->
-    <xacro:include filename="$(find robot_support)/urdf/environment/auxilirary/urdf/handtruck_pallet_macro.xacro"/>
+    <xacro:include filename="$(find robot_support)/urdf/environment/extra/handtruck_macro.xacro"/>
     <!-- The xacro must be included with passing parameters -->
     <!-- "connected_to" describes the link of which the object is connected to -->
-    <xacro:handtruck_pallet prefix="Handtruck" connected_to="$(arg global_ref_frame)" xyz="-0.500 1.500 0.000" rpy="0 0 ${radians(-35)}" mesh_scale="0.01"/>
+    <xacro:handtruck prefix="Handtruck" connected_to="$(arg global_ref_frame)" xyz="-0.500 1.500 0.000" rpy="0 0 ${radians(-35)}" mesh_scale="0.01"/>
         
 </robot>
