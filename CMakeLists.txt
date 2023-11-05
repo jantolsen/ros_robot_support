@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  robot_toolbox
 )
 
 ## System dependencies are found with CMake's conventions
@@ -111,8 +112,9 @@ catkin_package(
   roscpp 
   rospy 
   std_msgs
- DEPENDS 
-  system_lib
+  robot_toolbox
+#  DEPENDS 
+#   system_lib
 )
 
 ###########
@@ -129,6 +131,12 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/prefix_param_tool.cpp
+)
+
+# Specify libraries to link a library or executable target against
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
 )
 
 ## Add cmake target dependencies of the library

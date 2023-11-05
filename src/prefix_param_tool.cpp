@@ -291,7 +291,8 @@ namespace PrefixParamTool
         XmlRpc::XmlRpcValue cached_tracik_kinematics_xml;
         XmlRpc::XmlRpcValue kinematics_param_xml;
         XmlRpc::XmlRpcValue opw_param_xml;
-        XmlRpc::XmlRpcValue kinematics_xml;
+        XmlRpc::XmlRpcValue kinematics_manipulator_xml;
+        XmlRpc::XmlRpcValue kinematics_eoat_xml;
         std::string kinematic_solver;
         
         // Get Default Kinematics Parameters
@@ -374,19 +375,22 @@ namespace PrefixParamTool
         if(kinematics_param_xml["solver"] == "KDL")
         {
             // Assign Kinematics
-            kinematics_xml = kdl_kinematics_xml;
+            kinematics_manipulator_xml = kdl_kinematics_xml;
+            kinematics_eoat_xml = kdl_kinematics_xml;
         }
         // TracIK
         else if (kinematics_param_xml["solver"] == "TRACIK")
         {
             // Assign Kinematics
-            kinematics_xml = tracik_kinematics_xml;
+            kinematics_manipulator_xml = tracik_kinematics_xml;
+            kinematics_eoat_xml = tracik_kinematics_xml;
         }
         // OPW
         else if (kinematics_param_xml["solver"] == "OPW")
         {
             // Assign Kinematics
-            kinematics_xml = opw_kinematics_xml;
+            kinematics_manipulator_xml = opw_kinematics_xml;
+            kinematics_eoat_xml = opw_kinematics_xml;
 
             // Get additional OPW Kinematics-Parameters for respective robot-type
             if(!nh.getParam("opw_kinematics_" + robot_type, opw_param_xml))
@@ -399,27 +403,46 @@ namespace PrefixParamTool
             }
 
             // Add additional OPW Kinematics-Parameters
-            kinematics_xml["opw_kinematics_geometric_parameters"] = opw_param_xml["opw_kinematics_geometric_parameters"];
-            kinematics_xml["opw_kinematics_joint_offsets"] = opw_param_xml["opw_kinematics_joint_offsets"];
-            kinematics_xml["opw_kinematics_joint_sign_corrections"] = opw_param_xml["opw_kinematics_joint_sign_corrections"];
+            // Kinematics Manipulator
+            kinematics_manipulator_xml["opw_kinematics_geometric_parameters"] = opw_param_xml["opw_kinematics_geometric_parameters"];
+            kinematics_manipulator_xml["opw_kinematics_joint_offsets"] = opw_param_xml["opw_kinematics_joint_offsets"];
+            kinematics_manipulator_xml["opw_kinematics_joint_sign_corrections"] = opw_param_xml["opw_kinematics_joint_sign_corrections"];
+
+            // Kinematics EOAT
+            kinematics_eoat_xml["opw_kinematics_geometric_parameters"] = opw_param_xml["opw_kinematics_geometric_parameters"];
+            kinematics_eoat_xml["opw_kinematics_joint_offsets"] = opw_param_xml["opw_kinematics_joint_offsets"];
+            kinematics_eoat_xml["opw_kinematics_joint_sign_corrections"] = opw_param_xml["opw_kinematics_joint_sign_corrections"];
+
+            // // Additional calculation are required for the EOAT-group kinematic parameters
+            // geometry_msgs::Transform transform;
+            // std::string elbow_link = robot_prefix + "_link_3";
+            // std::string eoat_tcp = robot_prefix + "_eoat_tcp";
+
+            // // Acquire relative transformation between elbow-link and eoat-tcp
+            // Toolbox::Kinematics::getCurrentTransform(eoat_tcp, elbow_link, transform, true);
+
+            // kinematics_eoat_xml["opw_kinematics_geometric_parameters"]["c4"] = 0.200 + 0.260;
         }
         // LMA
         else if (kinematics_param_xml["solver"] == "LMA")
         {
             // Assign Kinematics
-            kinematics_xml = lma_kinematics_xml;
+            kinematics_manipulator_xml = lma_kinematics_xml;
+            kinematics_eoat_xml = lma_kinematics_xml;
         }
         // Cached KDL
         else if (kinematics_param_xml["solver"] == "CACHED_KDL")
         {
             // Assign Kinematics
-            kinematics_xml = cached_kdl_kinematics_xml;
+            kinematics_manipulator_xml = cached_kdl_kinematics_xml;
+            kinematics_eoat_xml = cached_kdl_kinematics_xml;
         }
         // Cached TracIK
         else if (kinematics_param_xml["solver"] == "CACHED_TRACIK")
         {
             // Assign Kinematics
-            kinematics_xml = cached_tracik_kinematics_xml;
+            kinematics_manipulator_xml = cached_tracik_kinematics_xml;
+            kinematics_eoat_xml = cached_tracik_kinematics_xml;
         }
         // Unknown
         else
@@ -434,27 +457,31 @@ namespace PrefixParamTool
         // Update Global Kinematic-Parameters
         // -------------------------------
         // Update Kinematics with parameters from general settings
-        kinematics_xml["kinematics_solver_search_resolution"] = kinematics_param_xml["search_resolution"];
-        kinematics_xml["kinematics_solver_timeout"] = kinematics_param_xml["timeout"];
-        kinematics_xml["kinematics_solver_attempts"] = kinematics_param_xml["attempts"];
+        kinematics_manipulator_xml["kinematics_solver_search_resolution"] = kinematics_param_xml["search_resolution"];
+        kinematics_manipulator_xml["kinematics_solver_timeout"] = kinematics_param_xml["timeout"];
+        kinematics_manipulator_xml["kinematics_solver_attempts"] = kinematics_param_xml["attempts"];
+
+        kinematics_eoat_xml["kinematics_solver_search_resolution"] = kinematics_param_xml["search_resolution"];
+        kinematics_eoat_xml["kinematics_solver_timeout"] = kinematics_param_xml["timeout"];
+        kinematics_eoat_xml["kinematics_solver_attempts"] = kinematics_param_xml["attempts"];
 
         // Check for empty Robot-Prefix
         if(robot_prefix.empty())
         {
             // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "manipulator", kinematics_xml);
+            nh.setParam("/robot_description_kinematics/" + robot_prefix + "manipulator", kinematics_manipulator_xml);
 
             // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "eoat", kinematics_xml);
+            nh.setParam("/robot_description_kinematics/" + robot_prefix + "eoat", kinematics_eoat_xml);
         }
         // Non-Empty Robot-Prefix
         else
         {
             // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "_manipulator", kinematics_xml);
+            nh.setParam("/robot_description_kinematics/" + robot_prefix + "_manipulator", kinematics_manipulator_xml);
 
             // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "_eoat", kinematics_xml);
+            nh.setParam("/robot_description_kinematics/" + robot_prefix + "_eoat", kinematics_eoat_xml);
         }
     } // End-Function: prefixKinematicsParam()
 } // End Namespace

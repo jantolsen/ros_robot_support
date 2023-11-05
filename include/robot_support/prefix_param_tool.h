@@ -34,6 +34,15 @@
     // Ros
     #include <ros/ros.h>
 
+    // Messages
+    #include <geometry_msgs/Transform.h>
+    #include <geometry_msgs/Pose.h>
+
+
+    // Robot Toolbox
+    #include <robot_toolbox/toolbox.h>
+
+
 // Namespace: Prefix Param Toolbox
 // -------------------------------
 namespace PrefixParamTool
