@@ -122,5 +122,18 @@ namespace PrefixParamTool
         const std::string& robot_prefix,
         const std::string& robot_type);
 
+
+    // Prefix OMPL Planning-Parameters
+    // -------------------------------
+    /** \brief Load and remap robot's OMPL planning-parameters
+    * with robot specific prefix
+    * \param nh ROS Nodehandle
+    * \param robot_prefix Robot Prefix Name
+    */
+    void prefixOMPLParam(
+        const ros::NodeHandle& nh,
+        const std::string& robot_prefix);
+
+
 } // End Namespace
 #endif // PREFIX_PARAM_TOOL_H 

@@ -469,19 +469,74 @@ namespace PrefixParamTool
         if(robot_prefix.empty())
         {
             // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "manipulator", kinematics_manipulator_xml);
-
-            // Create new kinematics parameters on global parameter server
-            nh.setParam("/robot_description_kinematics/" + robot_prefix + "eoat", kinematics_eoat_xml);
+            nh.setParam("/robot_description_kinematics/manipulator", kinematics_manipulator_xml);
+            nh.setParam("/robot_description_kinematics/eoat", kinematics_eoat_xml);
         }
         // Non-Empty Robot-Prefix
         else
         {
             // Create new kinematics parameters on global parameter server
             nh.setParam("/robot_description_kinematics/" + robot_prefix + "_manipulator", kinematics_manipulator_xml);
-
-            // Create new kinematics parameters on global parameter server
             nh.setParam("/robot_description_kinematics/" + robot_prefix + "_eoat", kinematics_eoat_xml);
         }
     } // End-Function: prefixKinematicsParam()
+
+
+    // Prefix OMPL Planning-Parameters
+    // -------------------------------
+    void prefixOMPLParam(
+        const ros::NodeHandle& nh,
+        const std::string& robot_prefix)
+    {
+        // Defining local variables 
+        XmlRpc::XmlRpcValue ompl_param_xml;
+        XmlRpc::XmlRpcValue projection_evaluator;
+        std::vector<std::string> joint_names;
+
+        // Joint-Names
+        // -------------------------------
+        // Check parameter server for existing robot specific controller-joint-names parameter
+        if(!nh.getParam("/" + robot_prefix + "/controller_joint_names", joint_names))
+        {
+            // Report to terminal
+            ROS_ERROR_STREAM(__FUNCTION__ << ": Failed! Controller Joint-Names for Robot [" << robot_prefix << "] not found");
+
+            // Function failed
+            return;
+        }
+
+        // OMPL Parameters
+        // -------------------------------
+        // Check parameter server for existing OMPL manipulator parameters
+        if(!nh.getParam("/move_group/planning_pipelines/ompl/manipulator", ompl_param_xml))
+        {
+            // Report to terminal
+            ROS_ERROR_STREAM(__FUNCTION__ << ": Failed! OMPL-Planning Manipulator Parameters not found!");
+            
+            // Function failed
+            return;
+        }
+
+        // Create Project Evaluator based on robot joint-names (only use the two first joints)
+        projection_evaluator = "joints(" + joint_names[0] + ", " + joint_names[1] + ")";
+        
+        // Update the general OMPL-Planning manipulator with the created prefixed Project Evaluator parameter
+        ompl_param_xml["projection_evaluator"] = projection_evaluator;
+
+        // Check for empty Robot-Prefix
+        if(robot_prefix.empty())
+        {
+            // Create new OMPL-Planning parameters on global parameter server
+            nh.setParam("/move_group/planning_pipelines/ompl/manipulator", ompl_param_xml);
+            nh.setParam("/move_group/planning_pipelines/ompl/eoat", ompl_param_xml);
+        }
+        // Non-Empty Robot-Prefix
+        else
+        {
+            // Create new OMPL-Planning parameters on global parameter server
+            nh.setParam("/move_group/planning_pipelines/ompl/" + robot_prefix + "_manipulator", ompl_param_xml);
+            nh.setParam("/move_group/planning_pipelines/ompl/" + robot_prefix + "_eoat", ompl_param_xml);
+        }
+    } // End-Function: prefixOMPLParam()
+
 } // End Namespace

@@ -101,6 +101,12 @@ int main(int argc, char** argv)
     // and assigned them according to robot prefix
     PrefixParamTool::prefixKinematicsParam(nh, robot_prefix, robot_type);
 
+    // Prefix Robot OMPL Parameters
+    // -------------------------------
+    // Get OMPL parameter (loaded together with node)
+    // and assigned them according to robot prefix
+    PrefixParamTool::prefixOMPLParam(nh, robot_prefix);
+
     // Cleanup
     // -------------------------------
     // Remove private parameters on the anonymous nodehandle
@@ -115,4 +121,5 @@ int main(int argc, char** argv)
     nh.deleteParam("cached_kdl_kinematics");
     nh.deleteParam("cached_tracik_kinematics");
     nh.deleteParam("opw_kinematics_" + robot_type);
+    nh.deleteParam("move_group/planning_pipelines/ompl/manipulator");
 } // Function End: main()
