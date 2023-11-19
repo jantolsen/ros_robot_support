@@ -152,7 +152,7 @@ bool getSystemParam(
     // Get Robot Prefixes
     // -------------------------------
     // Multi-Robot System
-    if(robot_count > 0)
+    if(robot_count > 1)
     {
         // Iterate over robots and get Robot-Prefix for each robot
         for(size_t i = 0; i < robot_count; i++)
@@ -179,10 +179,18 @@ bool getSystemParam(
         if(!pnh.getParam("/robot/prefix", robot_prefix))
         {
             // Report to terminal
-            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ << ": Failed! Parameter Robot-Prefix [/robot/prefix] not found!");
+            ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ << ": Warning! Single robot system. Parameter Robot-Prefix [/robot/prefix] not found!");
+            ROS_WARN_STREAM(CLASS_PREFIX << __FUNCTION__ << ": Trying [/robot_1/prefix]");
 
-            // Function return
-            return false;
+            // Try second approach for getting Robot-Prefix
+            if(!pnh.getParam("/robot_1/prefix", robot_prefix))
+            {
+                // Report to terminal
+                ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ << ": Failed! Parameter Robot-Prefix [/robot/prefix] nor [/robot_1/prefix] was found!");
+                
+                // Function return
+                return false;
+            }
         }
 
         // Append Robot-Prefix to vector
