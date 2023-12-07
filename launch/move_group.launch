@@ -44,35 +44,12 @@
                     " />
     -->
 
-    <!-- Planning Pipelines -->
-    <group ns="move_group/planning_pipelines">
 
-        <!-- OMPL -->
-        <include ns="ompl" file="$(find robot_support)/launch/planning_pipeline.launch.xml">
-            <arg name="pipeline" value="ompl" />
-        </include>
+     <!-- Planning Pipelines -->
+    <include ns="move_group" file="$(find robot_support)/launch/planning_pipeline.launch.xml">
+        <arg name="pipeline" value="$(arg pipeline)" />
+    </include>
 
-        <!-- CHOMP -->
-        <include ns="chomp" file="$(find robot_support)/launch/planning_pipeline.launch.xml">
-            <arg name="pipeline" value="chomp" />
-        </include>
-
-        <!-- STOMP -->
-        <!-- <include ns="stomp" file="$(find robot_support)/launch/planning_pipeline.launch.xml">
-            <arg name="pipeline" value="stomp" />
-        </include> -->
-
-        <!-- Pilz Industrial Motion-->
-        <include ns="pilz" file="$(find robot_support)/launch/planning_pipeline.launch.xml">
-            <arg name="pipeline" value="pilz_industrial_motion_planner" />
-        </include>
-
-        <!-- Support custom planning pipeline -->
-        <include if="$(eval arg('pipeline') not in ['ompl', 'chomp', 'stomp', 'pilz'])"
-            file="$(find robot_support)/launch/planning_pipeline.launch.xml">
-            <arg name="pipeline" value="$(arg pipeline)" />
-        </include>
-    </group>
 
       <!-- Trajectory Execution Functionality -->
     <include ns="move_group" file="$(find robot_support)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
