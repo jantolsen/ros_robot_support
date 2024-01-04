@@ -73,7 +73,18 @@
     // -------------------------------
     void UserFrameHandler::broadcastUserFrames()
     {
+        // Create a TF2 Broadcaster
+        tf2_ros::TransformBroadcaster broadcast;
+        
+        // Iterate over user-frame map
+        for (auto& user_frame : user_frame_map_)
+        {
+            // Update Transformation time-stamp for the user-frame element
+            user_frame.second.transformStamped.header.stamp = ros::Time::now();
 
+            // Broadcast the user-frame element
+            broadcast.sendTransform(user_frame.second.transformStamped);
+        }
     }  // Function End: broadcastUserFrames() 
 
 

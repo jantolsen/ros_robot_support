@@ -31,13 +31,12 @@
 
 // Test: Function
 // -------------------------------
-void testFunc(ros::NodeHandle nh)
+void testFunc(UserFrameHandler& userFrameHandler)
 {
     // Define User-Frame Msgs
     robot_toolbox::UserFrame userFrameMsg;
 
-    // Define and initialize User-Frame-Handler
-    UserFrameHandler userFrameHandler(nh);
+    
 
     // Load-Param
     userFrameHandler.loadParamUserFrames("/user_frames");
@@ -69,6 +68,9 @@ void testFunc(ros::NodeHandle nh)
     ROS_INFO_STREAM("       y: " << userFrameMsg.poseRPY.orientation.z);
     ROS_INFO(" ");
 
+    // Broadcast User-Frames
+    userFrameHandler.broadcastUserFrames();
+
 } // Function end: testFunc()
 
 
@@ -90,12 +92,23 @@ int main(int argc, char** argv)
 
     // Test(s)
     // -------------------------------
-    testFunc(nh);
-        
+    // Define and initialize User-Frame-Handler
+    UserFrameHandler userFrameHandler(nh);
+
+    // Run testFunc in a loop
+    while (ros::ok()) 
+    {
+        testFunc(userFrameHandler);
+        ros::spinOnce(); // Handle ROS callbacks
+    }
+    
+    // // Spin to keep the node alive
+    // ros::spin();
+    
     // Shutdown
     // -------------------------------
     // ROS-Loop waiting for shutdown
-    // ros::waitForShutdown();
+    ros::waitForShutdown();
 
     // Function return
     return 0;
