@@ -77,7 +77,7 @@
         tf2_ros::TransformBroadcaster broadcast;
         
         // Iterate over user-frame map
-        for (auto& user_frame : user_frame_map_)
+        for (auto& user_frame : user_frames_map_)
         {
             // Update Transformation time-stamp for the user-frame element
             user_frame.second.transformStamped.header.stamp = ros::Time::now();
@@ -97,7 +97,7 @@
         std::string user_frame_key = user_frame;
 
         // Search for user-frame in user-frame map
-        boost::optional<robot_toolbox::UserFrame> result_search = Toolbox::Map::searchMapByKey(user_frame_map_, user_frame_key);
+        boost::optional<robot_toolbox::UserFrame> result_search = Toolbox::Map::searchMapByKey(user_frames_map_, user_frame_key);
         if(!result_search)
         {
             // Parameter validation failed
@@ -113,18 +113,27 @@
     }  // Function End: getUserFrame() 
 
 
+    // Get User-Frame
+    // -------------------------------
+    std::vector<robot_toolbox::UserFrame> UserFrameHandler::getUserFrames()
+    {
+        // Return local User-Frames-Vector
+        return user_frames_vec_;
+    }  // Function End: getUserFrames() 
+
+
     // Get User-Frame Map
     // -------------------------------
-    std::map<std::string, robot_toolbox::UserFrame> UserFrameHandler::getUserFrameMap()
+    std::map<std::string, robot_toolbox::UserFrame> UserFrameHandler::getUserFramesMap()
     {
         // Return local User-Frame-Map
-        return user_frame_map_;
-    } // Function End: getUserFrameMap() 
+        return user_frames_map_;
+    } // Function End: getUserFramesMap() 
 
 
     // Load User-Frames Data
     // -------------------------------
-    bool UserFrameHandler::loadParamUserFrames(
+    bool UserFrameHandler::loadParamData(
         const std::string& param_name)
     {
         // Define local variable(s)
@@ -141,15 +150,16 @@
             return false;
         }
         // Function return: Call overloading function
-        return loadParamUserFrames(param_xml, user_frame_map_);
+        return loadUserFrames(param_xml, user_frames_map_, user_frames_vec_);
     } // Function End: loadParamUserFrames() 
 
 
     // Load User-Frames Data
     // -------------------------------
-    bool UserFrameHandler::loadParamUserFrames(
+    bool UserFrameHandler::loadUserFrames(
         const XmlRpc::XmlRpcValue& param_xml,
-        std::map<std::string, robot_toolbox::UserFrame>& user_frame_map)
+        std::map<std::string, robot_toolbox::UserFrame>& user_frames_map,
+        std::vector<robot_toolbox::UserFrame>& user_frames_vec)
     {
         // Define local variable(s)
         XmlRpc::XmlRpcValue user_frame;
@@ -180,7 +190,7 @@
             }
 
             // Load user-frame data
-            boost::optional<robot_toolbox::UserFrame> result_load = loadParamUserFrame(param_xml[i]);
+            boost::optional<robot_toolbox::UserFrame> result_load = loadUserFrame(param_xml[i]);
             if(!result_load)
             {
                 // Parameter validation failed
@@ -191,8 +201,9 @@
                 return false;
             }
 
-            // Map search success! User-Frame is found in the container
-            user_frame_map.insert(std::pair<std::string, robot_toolbox::UserFrame>(result_load.value().name, result_load.value()));
+            // Add user-frame to user-frame map and user-frame vector
+            user_frames_map.insert(std::pair<std::string, robot_toolbox::UserFrame>(result_load.value().name, result_load.value()));
+            user_frames_vec.push_back(result_load.value());
         }
 
         // Function return
@@ -202,7 +213,7 @@
 
     // Load User-Frame Data
     // -------------------------------
-    boost::optional<robot_toolbox::UserFrame> UserFrameHandler::loadParamUserFrame(
+    boost::optional<robot_toolbox::UserFrame> UserFrameHandler::loadUserFrame(
         const XmlRpc::XmlRpcValue& param_xml)
     {
         // Reads and loads parameter data obtained from the parameter-server

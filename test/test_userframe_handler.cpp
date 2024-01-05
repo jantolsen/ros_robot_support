@@ -31,26 +31,8 @@
 
 // Test: Function
 // -------------------------------
-void testFunc(UserFrameHandler& userFrameHandler)
+void testFunc(robot_toolbox::UserFrame& userFrameMsg)
 {
-    // Define User-Frame Msgs
-    robot_toolbox::UserFrame userFrameMsg;
-
-    
-
-    // Load-Param
-    userFrameHandler.loadParamUserFrames("/user_frames");
-
-    // Get User-Frame
-    auto result = userFrameHandler.getUserFrame("test2");
-    if(result)
-    {
-        userFrameMsg = result.value();
-    }
-    else
-    {
-        ROS_ERROR("User-Frame not found!");
-    }
     // Debug Print
     // -------------------------------
     ROS_INFO(" ");
@@ -68,8 +50,7 @@ void testFunc(UserFrameHandler& userFrameHandler)
     ROS_INFO_STREAM("       y: " << userFrameMsg.poseRPY.orientation.z);
     ROS_INFO(" ");
 
-    // Broadcast User-Frames
-    userFrameHandler.broadcastUserFrames();
+    
 
 } // Function end: testFunc()
 
@@ -92,13 +73,36 @@ int main(int argc, char** argv)
 
     // Test(s)
     // -------------------------------
-    // Define and initialize User-Frame-Handler
-    UserFrameHandler userFrameHandler(nh);
+        // Define and initialize User-Frame-Handler
+        UserFrameHandler userFrameHandler(nh);
 
+        // Define User-Frame Msgs
+        robot_toolbox::UserFrame userFrameMsg;
+
+        // Load-Param
+        userFrameHandler.loadParamData("/user_frames");
+
+        // Get User-Frame
+        auto result = userFrameHandler.getUserFrame("test2");
+        if(result)
+        {
+            userFrameMsg = result.value();
+        }
+        else
+        {
+            ROS_ERROR("User-Frame not found!");
+        }
+
+        testFunc(userFrameMsg);
+    
+    ros::Rate rate(10.0);
     // Run testFunc in a loop
     while (ros::ok()) 
     {
-        testFunc(userFrameHandler);
+        
+        // Broadcast User-Frames
+        userFrameHandler.broadcastUserFrames();
+
         ros::spinOnce(); // Handle ROS callbacks
     }
     

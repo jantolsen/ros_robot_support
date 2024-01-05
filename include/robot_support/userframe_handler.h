@@ -109,7 +109,16 @@ class UserFrameHandler
             const std::string& user_frame);
 
 
-        // Get User-Frame Map
+        // Get User-Frames
+        // -------------------------------
+        /** \brief Get information on all custom user-frames.
+        *
+        * \return Return User-Frames vector [std::vector<robot_toolbox::UserFrame>]
+        */
+        std::vector<robot_toolbox::UserFrame> getUserFrames();
+
+
+        // Get User-Frames Map
         // -------------------------------
         /** \brief Get map of defined user-frames 
         *
@@ -117,10 +126,10 @@ class UserFrameHandler
         *
         * \return Return User-Frame-Map [std::map<std::string, robot_toolbox::UserFrame>]
         */
-        std::map<std::string, robot_toolbox::UserFrame> getUserFrameMap();
+        std::map<std::string, robot_toolbox::UserFrame> getUserFramesMap();
 
 
-        // Load User-Frames Data
+        // Load User-Frames Parameter Data
         // -------------------------------
         // (Function Overloading)
         /** \brief Reads and loads information on custom user-frames from the parameter server.
@@ -129,8 +138,9 @@ class UserFrameHandler
         * and store the information in a user-frame map
         *
         * \param param_name     Name of the User-Frame parameters, located on parameter server [std::string]
+        * \return Function return: Successful/Unsuccessful (true/false) [bool]
         */
-        bool loadParamUserFrames(
+        bool loadParamData(
             const std::string& param_name);
 
     // Protected Class members
@@ -146,9 +156,6 @@ class UserFrameHandler
         void init();
 
 
-        
-
-
         // Load User-Frames Data
         // -------------------------------
         // (Function Overloading)
@@ -157,12 +164,15 @@ class UserFrameHandler
         * Organize and structure the loaded parameters into respective user-frame message-type
         * and store the information in a user-frame map
         *
-        * \param param_xml      User-Frame parameters [XmlRpc::XmlRpcValue]
-        * \param user_frame_map Reference to User-Frame-Map [std::map<std::string, robot_toolbox::UserFrame>]
+        * \param param_xml          User-Frame parameters [XmlRpc::XmlRpcValue]
+        * \param user_frames_map    Map of User-Frames [std::map<std::string, robot_toolbox::UserFrame>]
+        * \param user_frames_vec    Vector of User-Frames [std::vector<robot_toolbox::UserFrame>]
+        * \return Function return: Successful/Unsuccessful (true/false) [bool]
         */
-        bool loadParamUserFrames(
+        bool loadUserFrames(
             const XmlRpc::XmlRpcValue& param_xml,
-            std::map<std::string, robot_toolbox::UserFrame>& user_frame_map);
+            std::map<std::string, robot_toolbox::UserFrame>& user_frames_map,
+            std::vector<robot_toolbox::UserFrame>& user_frames_vec);
 
         
         // Load User-Frame Data
@@ -175,7 +185,7 @@ class UserFrameHandler
         * \param param_xml User-Frame parameters [XmlRpc::XmlRpcValue]
         * \return Function return: Successful: User-Frame [robot_toolbox::UserFrame] / Unsuccessful: false [bool]
         */
-        boost::optional<robot_toolbox::UserFrame> loadParamUserFrame(
+        boost::optional<robot_toolbox::UserFrame> loadUserFrame(
             const XmlRpc::XmlRpcValue& param_xml);
 
 
@@ -203,8 +213,9 @@ class UserFrameHandler
         // -------------------------------
         ros::NodeHandle nh_;
         
-        // User-Frame Map
-        std::map<std::string, robot_toolbox::UserFrame> user_frame_map_;
+        // User-Frame collectors
+        std::map<std::string, robot_toolbox::UserFrame> user_frames_map_;
+        std::vector<robot_toolbox::UserFrame> user_frames_vec_;
 
         // ROS Publsiher(s)
         // -------------------------------
