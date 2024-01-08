@@ -37,6 +37,12 @@
         nh_(nh),
         param_name_(param_name)
     {
+        // // Initialize Service-Server(s)
+        // auto tmp_createUserFrameObject_server_ = nh_.advertiseService("/user_frame_create", &UserFrameManager::createUserFrameObject, this);
+        // auto tmp_updateUserFrameObject_server_ = nh_.advertiseService("/user_frame_update", &UserFrameManager::updateUserFrameObject, this);
+        // createUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_createUserFrameObject_server_);
+        // updateUserFrameObject_server_ = std::make_shared<ros::ServiceServer>(tmp_updateUserFrameObject_server_);
+
         // Initialize user-frame manager
         init();
     } // Class Constructor End: UserFrameManager()
@@ -203,6 +209,42 @@
     } // Function End: publishAndBroadcastUserFrame()
 
 
+    // Update User-Frame Object
+    // -------------------------------
+    // (Function Overloading)
+    void UserFrameManager::updateUserFrameObject(
+        UserFrameContext::Ptr& user_frame_oject,
+        const robot_toolbox::UserFrame& user_frame_data)
+    {
+        // Update user-frame object according to given user-frame data
+        user_frame_oject->updateUserFrame(user_frame_data);
+    }  // Function End: updateUserFrameObject()
+
+
+    // Update User-Frame Object
+    // -------------------------------
+    // (Function Overloading)
+    void UserFrameManager::updateUserFrameObject(
+        const std::string& user_frame_name,
+        const robot_toolbox::UserFrame& user_frame_data)
+    {
+        // Find corresponding user-frame object
+        boost::optional<std::shared_ptr<UserFrameContext>> result_search = getUserFrameObject(user_frame_name);
+        if(!result_search)
+        {
+            // Parameter validation failed
+            ROS_ERROR_STREAM(CLASS_PREFIX << __FUNCTION__ 
+                << ": Failed! User-Frame [" << user_frame_name <<"] is NOT found in User-Frame-Map");
+
+            // Function return
+            return;
+        }
+
+        // Update user-frame object according to given user-frame data
+        updateUserFrameObject(result_search.value(), user_frame_data);
+    } // Function End: updateUserFrameObject()
+
+
     // Load User-Frames Parameter Data
     // -------------------------------
     bool UserFrameManager::loadParamData(
@@ -271,3 +313,23 @@
         // Function return
         return true;
     } // Function End: loadParamData() 
+
+
+    // // Service Callback: Create User-Frame object
+    // // -------------------------------
+    // bool UserFrameManager::createUserFrameObjectCB(
+    //     robot_toolbox::UserFrameCreate::Request& req,
+    //     robot_toolbox::UserFrameCreate::Response& res)
+    // {
+
+    // } // Function End: createUserFrameObjectCB() 
+
+    
+    // // Service Callback: Update User-Frame object
+    // // -------------------------------
+    // bool UserFrameManager::updateUserFrameObjectCB(
+    //     robot_toolbox::UserFrameUpdate::Request& req,
+    //     robot_toolbox::UserFrameUpdate::Response& res)
+    // {
+
+    // } // Function End: updateUserFrameObjectCB() 

@@ -137,7 +137,7 @@ class UserFrameManager
         * Each user-frame [std::shared_ptr<UserFrameContext>] 
         * is stored in a collective vector.
         *
-        * \return Return Vector of User-Frames [std::vector<robot_toolbox::UserFrame>]
+        * \return Return Vector of User-Frames [std::vector<std::shared_ptr<UserFrameContext>]
         */
         std::vector<std::shared_ptr<UserFrameContext>> getUserFrameObjectsVec();
 
@@ -150,7 +150,7 @@ class UserFrameManager
         * is paired with their respective name [std::string] 
         * and stored in a collective map.
         *
-        * \return Return Map of User-Frames [std::map<std::string, robot_toolbox::UserFrame>]
+        * \return Return Map of User-Frames [std::map<std::string, std::shared_ptr<UserFrameContext>]
         */
         std::map<std::string, std::shared_ptr<UserFrameContext>> getUserObjectsMap();
 
@@ -165,6 +165,38 @@ class UserFrameManager
         * and broadcasted as a tf2 transform [geometry_msgs::TransformStamped].
         */
         void publishAndBroadcastUserFrames();
+
+
+        // Update User-Frame Object
+        // -------------------------------
+        // (Function Overloading)
+        /** \brief Update a specific User-Frame oject
+        *
+        * Searches for the given user-frame object
+        * and updates the object according to the given parameter data.
+        *
+        * \param user_frame_oject Pointer to User-Frame object [UserFrameContext::Ptr]
+        * \param user_frame_data Updated User-Frame data (collection of parameter data) [robot_toolbox::UserFrame]
+        */
+        void updateUserFrameObject(
+            UserFrameContext::Ptr& user_frame_oject,
+            const robot_toolbox::UserFrame& user_frame_data);
+
+
+        // Update User-Frame Object
+        // -------------------------------
+        // (Function Overloading)
+        /** \brief Update a specific User-Frame oject
+        *
+        * Searches for the given user-frame object
+        * and updates the object according to the given parameter data.
+        *
+        * \param user_frame_name Name of User-Frame object to locate [std:string]
+        * \param user_frame_data Updated User-Frame data (collection of parameter data) [robot_toolbox::UserFrame]
+        */
+        void updateUserFrameObject(
+            const std::string& user_frame_name,
+            const robot_toolbox::UserFrame& user_frame_data);
 
 
     // Protected Class members
@@ -209,10 +241,45 @@ class UserFrameManager
         std::map<std::string, std::shared_ptr<UserFrameContext>> user_frame_map_;
         std::vector<std::shared_ptr<UserFrameContext>> user_frame_vec_;
 
-
         // ROS Nodehandle(s)
         // -------------------------------
         ros::NodeHandle nh_;
+
+        // ROS Service Server(s)
+        // -------------------------------
+        // (Declaring Service-Servers as shared-pointers to allow shared ownership of the objects)
+        std::shared_ptr<ros::ServiceServer> createUserFrameObject_server_;  // ROS Server for creating a User-Frame object
+        std::shared_ptr<ros::ServiceServer> updateUserFrameObject_server_;  // ROS Server for updating User-Frame object
+
+
+        // // Service Callback: Create User-Frame object
+        // // -------------------------------
+        // /** \brief Create User-Frame object Callback function.
+        // *
+        // * Move the corresponding Workspace-Object 
+        // *
+        // * \param request    Service-Request [robot_toolbox::UserFrameCreate::Request]
+        // * \param response   Service-Response [robot_toolbox::UserFrameCreate::Response]
+        // * \return Function result: Successful/Unsuccessful (true/false)
+        // */
+        // bool createUserFrameObjectCB(
+        //     robot_toolbox::UserFrameCreate::Request& req,
+        //     robot_toolbox::UserFrameCreate::Response& res);
+
+        
+        // // Service Callback: Update User-Frame object
+        // // -------------------------------
+        // /** \brief Update Allowed-Collision-Matrix (ACM).
+        // *
+        // * Add/Remove collision-entries for corresponding object-elements 
+        // *
+        // * \param request    Service-Request [robot_toolbox::UserFrameUpdate::Request]
+        // * \param response   Service-Response [robot_toolbox::UserFrameUpdate::Response]
+        // * \return Function result: Successful/Unsuccessful (true/false)
+        // */
+        // bool updateUserFrameObjectCB(
+        //     robot_toolbox::UserFrameUpdate::Request& req,
+        //     robot_toolbox::UserFrameUpdate::Response& res);
 
 }; // End Class: UserFrameManager
 #endif // USER_FRAME_MANAGER_H 
