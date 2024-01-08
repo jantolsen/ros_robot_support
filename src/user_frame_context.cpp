@@ -122,14 +122,14 @@
     }  // Function End: getUserFrame()
 
 
-    // Set User-Frame
+    // Update User-Frame
     // -------------------------------
-    void UserFrameContext::setUserFrame(
+    void UserFrameContext::updateUserFrame(
         robot_toolbox::UserFrame user_frame)
     {
         // Update local User-Frame
         user_frame_ = user_frame;
-    }  // Function End: setUserFrame()
+    }  // Function End: updateUserFrame()
 
 
     // Print User-Frame

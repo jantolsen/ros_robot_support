@@ -147,13 +147,13 @@ class UserFrameContext
         robot_toolbox::UserFrame getUserFrame();
 
 
-        // Set User-Frame
+        // Update User-Frame
         // -------------------------------
-        /** \brief Set and update information on custom user-frame.
+        /** \brief Update custom user-frame information.
         *
         * \param user_frame Updated User-Frame [robot_toolbox::UserFrame]
         */
-        void setUserFrame(
+        void updateUserFrame(
             robot_toolbox::UserFrame user_frame);
 
 
