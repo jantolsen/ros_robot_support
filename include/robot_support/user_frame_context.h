@@ -41,7 +41,7 @@
     // Robotics Toolbox
     #include "robot_toolbox/toolbox.h"
 
-    // Toolbox Messages
+    // Robotics Toolbox Messages
     #include "robot_toolbox/UserFrame.h"
 
 
@@ -58,15 +58,46 @@ class UserFrameContext
     // -------------------------------
     // Accessible for everyone
     public:
+        // Define Shared-Pointer of Class-Object
+        typedef typename std::shared_ptr<UserFrameContext> Ptr;
 
         // Class constructor
         // -------------------------------
+        // (Constructor Overloading)
         /** \brief User-Frame Context class constuctor
         *
-        * \param nh     ROS Nodehandle
+        * \param nh         ROS Nodehandle [ros::Nodehandle]
+        * \param user_frame User-Frame [robot_toolbox::UserFrame]
         */
         UserFrameContext(
-            ros::NodeHandle& nh);
+            ros::NodeHandle& nh,
+            const robot_toolbox::UserFrame& user_frame);
+
+
+        // Class constructor
+        // -------------------------------
+        // (Constructor Overloading)
+        /** \brief User-Frame Context class constuctor
+        *
+        * \param nh         ROS Nodehandle [ros::Nodehandle]
+        * \param param_name User-Frame parameter name, located on parameter server [std::string]
+        */
+        UserFrameContext(
+            ros::NodeHandle& nh,
+            const std::string& param_name);
+
+        
+        // Class constructor
+        // -------------------------------
+        // (Constructor Overloading)
+        /** \brief User-Frame Context class constuctor
+        *
+        * \param nh         ROS Nodehandle [ros::Nodehandle]
+        * \param param_xml  User-Frame parameter, located on parameter server [XmlRpc::XmlRpcValue]
+        */
+        UserFrameContext(
+            ros::NodeHandle& nh,
+            const XmlRpc::XmlRpcValue& param_xml);
 
 
         // Class destructor
@@ -91,9 +122,20 @@ class UserFrameContext
         /** \brief Broadcast user-frame.
         *
         * Broadcasts custom defined user-frames as tf2 transforms.
-        * The user-frame is broadcasted as a [geometry_msgs::TransformStamped] message-types.
+        * The user-frame is broadcasted as a [geometry_msgs::TransformStamped] message-type.
         */
         void broadcastUserFrame();
+
+
+        // Publish and Broadcast User-Frame
+        // -------------------------------
+        /** \brief Publish and Broadcast user-frame. 
+        *
+        * Publishes and broadcast custom defined user-frame.
+        * The user-frame is published as a topic [robot_toolbox::UserFrame].
+        * and broadcasted as a tf2 transform [geometry_msgs::TransformStamped].
+        */
+        void publishAndBroadcastUserFrame();
 
 
         // Get User-Frame
@@ -104,14 +146,24 @@ class UserFrameContext
         */
         robot_toolbox::UserFrame getUserFrame();
 
-        // Update User-Frame
+
+        // Set User-Frame
         // -------------------------------
-        /** \brief Update information on custom user-frame.
+        /** \brief Set and update information on custom user-frame.
         *
         * \param user_frame Updated User-Frame [robot_toolbox::UserFrame]
         */
-        void updateUserFrame(
+        void setUserFrame(
             robot_toolbox::UserFrame user_frame);
+
+
+        // Print User-Frame
+        // -------------------------------
+        /** \brief Print information on custom user-frame to terminal.
+        *
+        * Implemented for debugging purposes.
+        */
+        void printUserFrame();
 
 
     // Protected Class members
@@ -120,40 +172,36 @@ class UserFrameContext
     // and classes which inherits from the parent class
     protected:
 
-        // Initialize User-Frame Context
+        // Load User-Frame Parameter Data
         // -------------------------------
-        /** \brief Initialize User-Frame Context
-        */
-        void init();
-
-
-        // Load Parameter Data
-        // -------------------------------
-        /** \brief Loads parameter data on custom user-frame from the parameter server.
+        // (Function Overloading)
+        /** \brief Reads and loads information on custom user-frame from the parameter server.
         *
-        * With the loaded parameter data, the function calls "LoadUserFrame" 
-        * to organize and structure the loaded parameters into user-frame message-type
+        * Organize and structure the loaded parameters into user-frame message-type.
+        * If successful, the gathered user-frame is returned. 
+        * Function returns fals if it fails to load user-frame data.
         *
-        * \param param_name Name of the User-Frame parameter data, located on parameter server [std::string]
-        * \return Function return: Successful/Unsuccessful (true/false) [bool]
+        * \param param_name User-Frame parameter name, located on parameter server [std::string]
+        * \return Function return: Successful: User-Frame [robot_toolbox::UserFrame] / Unsuccessful: false [bool]
         */
-        bool loadParamData(
+        boost::optional<robot_toolbox::UserFrame> loadParamData(
             const std::string& param_name);
 
 
-        // Load User-Frame Data
+        // Load User-Frame Parameter Data
         // -------------------------------
-        /** \brief Reads and loads information on custom user-frames from the parameter server.
+        // (Function Overloading)
+        /** \brief Reads and loads information on custom user-frame from the parameter server.
         *
-        * Organize and structure the loaded parameters into user-frame message-type
+        * Organize and structure the loaded parameters into user-frame message-type.
+        * If successful, the gathered user-frame is returned. 
+        * Function returns fals if it fails to load user-frame data.
         *
         * \param param_xml  User-Frame parameters [XmlRpc::XmlRpcValue]
-        * \param user_frame User-Frame [robot_toolbox::UserFrame]
-        * \return Function return: Successful/Unsuccessful (true/false) [bool]
+        * \return Function return: Successful: User-Frame [robot_toolbox::UserFrame] / Unsuccessful: false [bool]
         */
-        bool loadUserFrame(
-            const XmlRpc::XmlRpcValue& param_xml,
-            robot_toolbox::UserFrame& user_frame);
+        boost::optional<robot_toolbox::UserFrame> loadParamData(
+            const XmlRpc::XmlRpcValue& param_xml);
 
 
         // Validate Frame
@@ -162,11 +210,11 @@ class UserFrameContext
         *
         * Validate and check if frame exists and is available.
         *
-        * \param frame Frame name [std::string]
+        * \param frame_name Frame name [std::string]
         * \return Function return: Successful/Unsuccessful (true/false) [bool]
         */
         bool validateFrame(
-            const std::string& frame);
+            const std::string& frame_name);
 
 
     // Private Class members
@@ -176,6 +224,10 @@ class UserFrameContext
         // Class-Name-Prefix for terminal message
         static const std::string CLASS_PREFIX;
         
+        // Class Local Member(s)
+        // -------------------------------
+        robot_toolbox::UserFrame user_frame_;
+
         // ROS Nodehandle(s)
         // -------------------------------
         ros::NodeHandle nh_;
@@ -186,10 +238,7 @@ class UserFrameContext
 
         // ROS TF2 Broadcaster
         // -------------------------------
-        static tf2_ros::TransformBroadcaster tf2_broadcaster_;
-
-        // User-Frame
-        robot_toolbox::UserFrame user_frame_;
+        tf2_ros::TransformBroadcaster tf2_broadcaster_;
 
 }; // End Class: UserFrameContext
 #endif // USER_FRAME_CONTEXT_H 

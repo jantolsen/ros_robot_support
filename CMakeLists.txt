@@ -131,7 +131,8 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/prefix_param_tool.cpp
-  src/userframe_handler.cpp
+  src/user_frame_context.cpp
+  src/user_frame_manager.cpp
 )
 
 # Specify libraries to link a library or executable target against
