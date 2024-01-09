@@ -131,8 +131,6 @@ include_directories(
 # Declare a C++ library
 add_library(${PROJECT_NAME}
   src/prefix_param_tool.cpp
-  src/user_frame_context.cpp
-  src/user_frame_manager.cpp
 )
 
 # Specify libraries to link a library or executable target against
@@ -161,14 +159,6 @@ add_executable(joint_state_publisher_node
   src/joint_state_publisher_node.cpp)
 
 target_link_libraries(joint_state_publisher_node
-  ${catkin_LIBRARIES}
-  ${PROJECT_NAME}
-)
-
-add_executable(test_userframe_handler 
-  test/test_userframe_handler.cpp)
-
-target_link_libraries(test_userframe_handler
   ${catkin_LIBRARIES}
   ${PROJECT_NAME}
 )
